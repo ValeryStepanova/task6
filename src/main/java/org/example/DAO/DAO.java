@@ -1,13 +1,11 @@
 package org.example.DAO;
 
-import org.example.DTO.PersonDTO;
-import org.example.connecttion.WorkWithBase;
-
 import java.sql.SQLException;
+import java.util.List;
 
-public interface DAO {
-    void create(PersonDTO personDTO, WorkWithBase connection) throws SQLException ;
-    void update(PersonDTO personDTO,  WorkWithBase connection, int id) throws SQLException;
-    void read(WorkWithBase connection) throws SQLException;
-    void delete(int id, WorkWithBase connection) throws SQLException;
+public interface DAO<T>{
+    void create(T obj) throws SQLException ;
+    void update(T obj, int id) throws SQLException;
+    List<T> read() throws SQLException;
+    void delete(int id) throws SQLException;
 }

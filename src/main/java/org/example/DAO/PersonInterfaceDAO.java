@@ -1,9 +1,10 @@
 package org.example.DAO;
 
-import org.example.connecttion.WorkWithBase;
+import org.example.DTO.PersonDTO;
 
 import java.sql.SQLException;
+import java.util.List;
 
-public interface PersonInterfaceDAO extends DAO {
-    void find_and_sort(WorkWithBase connection) throws SQLException;
+public interface PersonInterfaceDAO extends DAO<PersonDTO> {
+    List<PersonDTO> findAndSort() throws SQLException;
 }

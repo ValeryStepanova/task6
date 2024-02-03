@@ -1,9 +1,11 @@
 package org.example.DAO;
 
 import org.example.DTO.PersonDTO;
-import org.example.connecttion.WorkWithBase;
+import org.example.utils.Printer;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PersonDao implements PersonInterfaceDAO {
     public static final String selectAll = "SELECT *from Person";
@@ -12,70 +14,60 @@ public class PersonDao implements PersonInterfaceDAO {
     public static final String sort = "select* from person where age>21\n" +
             "order by dateTimeCreate asc";
     public static final String DELETE = "delete from person where id = ?";
-    public static final  String UPDATE = "UPDATE person\n" +
+    public static final String UPDATE = "UPDATE person\n" +
             "SET age = ?, salary = ?, passport = ?, address = ?, dateOfBirthday = ?, dateTimeCreate = ?, timeToLunch= ?, letter = ?\n" +
             "WHERE person.id = ?";
+    Connection connection;
 
-    public void read(WorkWithBase connection) throws SQLException {
-        Statement statement = connection.getConnection().createStatement();
+
+    public PersonDao(Connection connection) {
+        this.connection = connection;
+    }
+
+    @Override
+    public void create(PersonDTO personDTO) throws SQLException {
+        Printer.setter(personDTO,connection, insert, 0);
+        System.out.println("Пользователь добавлен");
+    }
+
+    public List<PersonDTO> read() throws SQLException {
+        Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(selectAll);
+        List<PersonDTO> list = new ArrayList<>();
         while (resultSet.next()) {
-            System.out.println(resultSet.getInt(2) + " " + resultSet.getDouble(3)
-                    + " " + resultSet.getString(4) + " " + resultSet.getString(5) + " " + resultSet.getDate(6) + " " +
-                    resultSet.getTimestamp(7) + " " + resultSet.getTime(8));
+            list.add(Printer.build(resultSet));
         }
         statement.close();
-    }
-
-    public void create(PersonDTO personDTO, WorkWithBase connection) throws SQLException {
-        PreparedStatement statement = connection.getConnection().prepareStatement(insert);
-        statement.setInt(1, personDTO.getAge());
-        statement.setDouble(2, personDTO.getSalary());
-        statement.setString(3, personDTO.getPassport());
-        statement.setString(4, personDTO.getAddress());
-        statement.setDate(5, personDTO.getDateOdBirthday());
-        statement.setTimestamp(6, personDTO.getDateTimeCreator());
-        statement.setTime(7, personDTO.getTimeToLunch());
-        statement.setString(8, personDTO.getLetter());
-        statement.executeUpdate();
-        statement.close();
-        System.out.println("\nПользователь добавлен!\n");
-    }
-
-    public void find_and_sort(WorkWithBase connection) throws SQLException {
-        Statement statement = connection.getConnection().createStatement();
-        ResultSet resultSet = statement.executeQuery(sort);
-        while (resultSet.next()) {
-            System.out.println(resultSet.getInt(2) + " " + resultSet.getDouble(3)
-                    + " " + resultSet.getString(4) + " " + resultSet.getString(5) + " " + resultSet.getDate(6) + " " +
-                    resultSet.getTimestamp(7) + " " + resultSet.getTime(8));
-        }
-        statement.close();
-        System.out.println("Все пользователи, возраст которых больше 21 отсортированы");
+        resultSet.close();
+        return list;
     }
 
     @Override
-    public void update(PersonDTO personDTO, WorkWithBase connection, int id) throws SQLException {
-        PreparedStatement statement = connection.getConnection().prepareStatement(UPDATE);
-        statement.setInt(1, personDTO.getAge());
-        statement.setDouble(2, personDTO.getSalary());
-        statement.setString(3, personDTO.getPassport());
-        statement.setString(4, personDTO.getAddress());
-        statement.setDate(5, personDTO.getDateOdBirthday());
-        statement.setTimestamp(6, personDTO.getDateTimeCreator());
-        statement.setTime(7, personDTO.getTimeToLunch());
-        statement.setString(8, personDTO.getLetter());
-        statement.setInt(9, id);
-        statement.executeUpdate();
-        statement.close();
-        System.out.println("Изменено");
-    }
-
-    @Override
-    public void delete(int id, WorkWithBase connection) throws SQLException {
-        PreparedStatement preparedStatement = connection.getConnection().prepareStatement(DELETE);
+    public void delete(int id) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
         preparedStatement.setInt(1, id);
         preparedStatement.executeUpdate();
         preparedStatement.close();
+        System.out.println("Удалено");
+    }
+
+    @Override
+    public List<PersonDTO> findAndSort() throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(sort);
+        List<PersonDTO> list = new ArrayList<>();
+        while (resultSet.next()) {
+            list.add(Printer.build(resultSet));
+        }
+        resultSet.close();
+        statement.close();
+        return list;
+    }
+
+    @Override
+    public void update(PersonDTO personDTO, int id) throws SQLException {
+        Printer.setter(personDTO, connection, UPDATE, id);
+        System.out.println("Пользовател изменен");
+
     }
 }
