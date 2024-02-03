@@ -1,20 +1,19 @@
 package org.example.metadata;
 
-import org.example.connecttion.WorkWithBase;
-
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public class MetaData {
-    public void getColumns(WorkWithBase connection) throws SQLException {
-        DatabaseMetaData data = connection.getConnection().getMetaData();
+    public void viewColumns(Connection connection) throws SQLException {
+        DatabaseMetaData data = connection.getMetaData();
         ResultSet resultSet = data.getColumns(null, null, "person", null);
         while (resultSet.next()){
-            System.out.println(resultSet.getString("COLUMN_NAME") + " "
-                    + resultSet.getString("TYPE_NAME") + " "
-                    + resultSet.getString("COLUMN_SIZE"));
+            System.out.println(resultSet.getString("COLUMN_NAME"));
+            System.out.println(resultSet.getString("TYPE_NAME"));
+            System.out.println(resultSet.getString("COLUMN_SIZE"));
         }
+        resultSet.close();
     }
 }

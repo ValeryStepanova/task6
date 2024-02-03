@@ -1,9 +1,11 @@
 package org.example.DAO;
 
 import org.example.DTO.PersonDTO;
-import org.example.connecttion.WorkWithBase;
+import org.example.utils.Printer;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PersonDao {
     public static final String selectAll = "SELECT *from Person";
@@ -11,42 +13,39 @@ public class PersonDao {
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     public static final String sort = "select* from person where age>21\n" +
             "order by dateTimeCreate asc";
-    private final WorkWithBase connection = new WorkWithBase();
+    private final Connection connection;
 
-    public void printAll(WorkWithBase connection) throws SQLException {
-        Statement statement = connection.getConnection().createStatement();
+    public PersonDao(Connection connection) {
+        this.connection = connection;
+    }
+
+
+    public List<PersonDTO> printAll() throws SQLException {
+        Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(selectAll);
+        List<PersonDTO> list = new ArrayList<>();
         while (resultSet.next()) {
-            System.out.println(resultSet.getInt(2) + " " + resultSet.getDouble(3)
-                    + " " + resultSet.getString(4) + " " + resultSet.getString(5) + " " + resultSet.getDate(6) + " " +
-                    resultSet.getTimestamp(7) + " " + resultSet.getTime(8));
+            list.add(Printer.build(resultSet));
         }
         statement.close();
-    }
+        resultSet.close();
+        return list;
+}
 
     public void create(PersonDTO personDTO) throws SQLException {
-        PreparedStatement statement = connection.getConnection().prepareStatement(insert);
-        statement.setInt(1, personDTO.getAge());
-        statement.setDouble(2, personDTO.getSalary());
-        statement.setString(3, personDTO.getPassport());
-        statement.setString(4, personDTO.getAddress());
-        statement.setDate(5, personDTO.getDateOdBirthday());
-        statement.setTimestamp(6, personDTO.getDateTimeCreator());
-        statement.setTime(7, personDTO.getTimeToLunch());
-        statement.setString(8, personDTO.getLetter());
-        statement.executeUpdate();
-         statement.close();
+        Printer.setter(personDTO, connection);
     }
 
-    public void find_and_sort() throws SQLException {
-        Statement statement = connection.getConnection().createStatement();
+    public List<PersonDTO> findAndSort() throws SQLException {
+        Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(sort);
-        while (resultSet.next()){
-            System.out.println(resultSet.getInt(2) + " " + resultSet.getDouble(3)
-                    + " " + resultSet.getString(4) + " " + resultSet.getString(5) + " " + resultSet.getDate(6) + " " +
-                    resultSet.getTimestamp(7) + " " + resultSet.getTime(8));
+        List<PersonDTO> list = new ArrayList<>();
+        while (resultSet.next()) {
+            list.add(Printer.build(resultSet));
         }
+        resultSet.close();
         statement.close();
+        return list;
     }
 
 }
