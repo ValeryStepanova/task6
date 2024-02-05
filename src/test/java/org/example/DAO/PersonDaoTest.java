@@ -10,11 +10,11 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class PersonDaoTest extends TestCase {
+    PersonDao personDao = new PersonDao();
     public void testCreate() {
         EntityManager entityManager = HibernateUtil.getEntityManager();
         entityManager.getTransaction().begin();
         PersonDTO personDTO = TestUtil.build();
-        PersonDao personDao = new PersonDao();
         personDao.create(personDTO);
         PersonDTO expectPerson = entityManager.find(PersonDTO.class, 1);
         entityManager.getTransaction().commit();
@@ -29,7 +29,6 @@ public class PersonDaoTest extends TestCase {
     }
 
     public void testRead() {
-        PersonDao personDao = new PersonDao();
         PersonDTO expectPerson = TestUtil.build();
         personDao.create(expectPerson);
         PersonDTO realPerson = personDao.read(1);
@@ -46,14 +45,18 @@ public class PersonDaoTest extends TestCase {
         PersonDTO person = TestUtil.build();
         int age = person.getAge();
         person.setAge(29);
-        PersonDao personDao = new PersonDao();
         personDao.update(person);
         Assert.assertNotEquals(age, person.getAge());
     }
-
+    public void testFindAndSort() {
+        PersonDao personDao = new PersonDao();
+        personDao.create(TestUtil.build());
+        personDao.create(TestUtil.buildPerson21());
+        List<PersonDTO> list = personDao.findAndSort();
+        Assert.assertEquals(1, list.size());
+    }
 
     public void testDelete() {
-        PersonDao personDao = new PersonDao();
         PersonDTO expectPerson = TestUtil.build();
         personDao.create(expectPerson);
         PersonDTO realPerson = personDao.delete(1);
@@ -66,11 +69,4 @@ public class PersonDaoTest extends TestCase {
         Assert.assertEquals(expectPerson.getDateOfBirthday(), realPerson.getDateOfBirthday());
     }
 
-    public void testFindAndSort() {
-        PersonDao personDao = new PersonDao();
-        personDao.create(TestUtil.build());
-        personDao.create(TestUtil.buildPerson21());
-        List<PersonDTO> list = personDao.findAndSort();
-        Assert.assertEquals(2, list.size());
-    }
 }

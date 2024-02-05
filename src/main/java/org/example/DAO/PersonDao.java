@@ -58,7 +58,7 @@ public class PersonDao implements DAOPerson {
         entityManager.getTransaction().begin();
         Query query = entityManager.createNativeQuery(SORT, PersonDTO.class);
         entityManager.getTransaction().commit();
-        List<PersonDTO> list = query.getResultList();
+        List<PersonDTO> list = query.getResultList(); //насколько это плохо?
         return list;
     }
 }

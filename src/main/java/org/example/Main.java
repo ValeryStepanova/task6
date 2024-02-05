@@ -25,12 +25,9 @@ public class Main {
         personDTO.setAge(2343);
         System.out.println(personDao.update(personDTO));
         System.out.println(personDao.read(24));
-        personDao.delete(23);
+        personDao.delete(35);
         List<PersonDTO> list = personDao.findAndSort();
-        for (PersonDTO person : list
-        ) {
-            System.out.println(person);
+        list.forEach(System.out::println);
 
-        }
     }
 }
