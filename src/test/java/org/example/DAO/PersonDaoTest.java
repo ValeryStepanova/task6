@@ -10,7 +10,8 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class PersonDaoTest extends TestCase {
-    PersonDao personDao = new PersonDao();
+    private final PersonDao personDao = new PersonDao();
+
     public void testCreate() {
         EntityManager entityManager = HibernateUtil.getEntityManager();
         entityManager.getTransaction().begin();
@@ -48,6 +49,7 @@ public class PersonDaoTest extends TestCase {
         personDao.update(person);
         Assert.assertNotEquals(age, person.getAge());
     }
+
     public void testFindAndSort() {
         PersonDao personDao = new PersonDao();
         personDao.create(TestUtil.build());
