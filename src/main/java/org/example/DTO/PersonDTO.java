@@ -1,6 +1,7 @@
 package org.example.DTO;
 
 import lombok.*;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
@@ -17,7 +18,7 @@ public class PersonDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    Integer id;
+    private Integer id;
     @Column
     private int age;
 
@@ -30,13 +31,13 @@ public class PersonDTO {
     @Column
     private String address;
 
-    @Column
+    @Column(name = "date_of_birthday")
     private Date dateOfBirthday;
 
-    @Column
+    @Column(name = "date_time_create")
     private Timestamp dateTimeCreate;
 
-    @Column
+    @Column(name = "time_to_lunch")
     private Time timeToLunch;
 
     @Column
@@ -55,6 +56,4 @@ public class PersonDTO {
                 ", letter='" + letter + '\'' +
                 '}';
     }
-
-
 }
